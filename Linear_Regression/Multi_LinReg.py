@@ -4,13 +4,24 @@ from sklearn import datasets
 
 class Multivariable_LinearRegression:
     '''
-    Designed for more than one feature, but can also operate with one feature,
-    therefore this is a universal algorithm.
+    # Designed for more than one feature, but can also operate with one feature,
+    # therefore this is a universal algorithm.
 
-    Vector math and the numpy library apply to the algorithm's simplicity 
+    # Vector math and the numpy library apply to the algorithm's simplicity.
+
+    # Weights are written as vectors, thus as many weights as the model requires can be operated on.
+    # The number of samples and the number of features are unpacked from the shape of the feature matrix.
     '''
 
     def __init__(self, X, y, rate, show_progress):
+        '''
+        # X_train and y_train is initialized
+        # Since the number of features could be more than 1, weight is a vector
+        # bias and learning rate are also constants
+
+        # cost history and iteration history is recorded in an array for the error plot
+        '''
+
         self.X_train = X
         self.y_train = y
         self.learning_rate = rate
@@ -26,15 +37,36 @@ class Multivariable_LinearRegression:
         
     
     def _predict(self, X_input):
+        '''
+        # UTILITY FUNCTION
+
+        # y_hat = w1x1 + w2x2 + w3x3 + ... + wnxn + b
+        '''
+
         y_predict = np.dot(X_input, self.weights) + self.bias
         return y_predict
     
     
     def cost_function(self, y_true, y_predicted):
+        '''
+        # Numpy library automatically calculates the vectorized MSE
+        # error = sum[(y_true - y_pred) ** 2]
+        '''
+
         return np.mean((y_true - y_predicted) ** 2)
     
     
     def update_weights(self):
+        '''
+        # Regression models are reinforced iteratively with a gradient descent algorithm.
+        # In this case, the rate (derivative) of the weight vector and bias is defined as the derivative of the cost function.
+        # A smaller learning rate is favorable to make the gradient descent more precise rather than chaotic.
+        # Since an error as low as possible is optimal, the derivatives of weight and bias are subtracted from the current weight vector and bias.
+        # The weight vector and bias of the features are updated per iteration.
+
+        # Transpose of feature matrix is multiplied by the difference between y_pred and y_true
+        '''
+
         y_hat = self._predict(self.X_train)
         
         dw = (1 / self.num_samples) * np.dot(2 * self.X_train.T, (y_hat - self.y_train))
@@ -47,6 +79,13 @@ class Multivariable_LinearRegression:
     
     
     def train(self, iterations):
+        '''
+        # The train() function puts the update_weights() function in an iterative loop.
+        # With each iteration, data is collected and printed to screen.
+        # Cost is appended to the cost_history array --- weights and bias is printed out and eventually returned.
+        # Weight vectors are printed out as an array of weight indices
+        '''
+
         for i in range(0, iterations):
             y_hat = self._predict(self.X_train)
             weight, bias = self.update_weights()
@@ -62,6 +101,11 @@ class Multivariable_LinearRegression:
     
     
     def predict(self, X_input):
+        '''
+        # function to call after training
+        # tests the data with the trained model
+        '''
+
         y_predict = np.dot(X_input, self.weights) + self.bias
         return y_predict
 
